@@ -1,0 +1,22 @@
+#!/bin/sh -e
+
+say() {
+	echo "I: $@..."
+}
+
+do_postinst() {
+    # OBACHT - muss vor dem Release raus
+    echo "debug-shell not enabled"
+    # systemctl enable debug-shell
+}
+
+case "${1}" in
+	postinst)
+		do_postinst
+		;;
+	*)
+		echo "Usage: ${0} postinst"
+		;;
+esac
+
+:

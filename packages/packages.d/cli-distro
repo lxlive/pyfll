@@ -1,0 +1,21 @@
+desc = """
+    Distro specific common cli packages.
+"""
+
+packages = """
+    apt-conf-siduction
+    ceni
+    cli-installer
+    inxi
+    kernel-remover
+    pywwetha
+    setpassword
+    siduction-irc
+    siduction-scripts
+    sidu-manual
+    sshstart
+"""
+
+debconf = """
+    passwd passwd/root-password-crypted password *
+"""

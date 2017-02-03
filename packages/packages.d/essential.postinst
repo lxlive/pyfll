@@ -1,0 +1,106 @@
+#!/bin/sh -e
+
+say() {
+	echo "I: $@..."
+}
+
+get_efitarget() {
+	if [ "$efitype" = "x86_64-efi" ] ; then
+		efitarget="bootx64"
+	elif [ "$efitype" = "i386-efi" ] ; then
+		efitarget="bootia32"
+	fi
+}
+
+do_postinst() {
+	# create grub2 ElTorito support
+	if which grub-mkimage >/dev/null; then
+		say 'Creating grub2 El Torito image file'
+		grub-mkimage --prefix='/boot/grub' -d /usr/lib/grub/i386-pc/ --format=i386-pc-eltorito -o /tmp/grub_eltorito biosdisk iso9660
+		efitypes="x86_64-efi i386-efi"
+		doefi=""
+		for efitype in $efitypes ; do
+			[ -d "/usr/lib/grub/${efitype}" ] && doefi="Y"
+		done
+		if [ -n "${doefi}" ] ; then
+			say 'Creating grub-efi boot files'
+			iso_uuid=$(cat /tmp/iso_uuid)
+			mkdir /tmp/uuid
+			touch /tmp/uuid/${iso_uuid}
+			# create the memdisk image for cd booting
+			memdisk_img=`mktemp "/tmp/tmp.XXXXXXXXXX"` || exit 1
+			memdisk_dir=`mktemp -d "/tmp/tmp.XXXXXXXXXX"` || exit 1
+			mkdir -p ${memdisk_dir}/boot/grub
+			cat << EOF > ${memdisk_dir}/boot/grub/grub.cfg
+search --fs-uuid --set=root ${iso_uuid}
+set prefix=(\${root})/boot/grub
+source \$prefix/grub.cfg
+EOF
+			(cd "${memdisk_dir}"; tar -cf - boot) > "${memdisk_img}"
+			rm -rf ${memdisk_dir}
+			mkdir -p /tmp/efi_img/efi/boot
+			mkdir -p /tmp/efi/boot
+			for efitype in $efitypes ; do
+				if [ -d "/usr/lib/grub/$efitype" ] ; then
+					get_efitarget
+					grub-mkimage -O ${efitype} -m "${memdisk_img}" --prefix='(memdisk)/boot/grub' -o /tmp/efi_img/efi/boot/${efitarget}.efi search iso9660 configfile normal memdisk tar part_msdos part_gpt lvm fat ext2
+					cp /tmp/efi_img/efi/boot/${efitarget}.efi /tmp/efi/boot/${efitarget}.efi
+				fi
+			done
+		fi
+	fi
+
+	# preseed linux_cmdline_default
+	say 'preseed linux_cmdline_default for grub2'
+	echo grub-pc grub2/linux_cmdline_default string quiet systemd.show_status=1 splash | debconf-set-selections
+	echo grub-efi-ia32 grub2/linux_cmdline_default string quiet systemd.show_status=1 splash | debconf-set-selections
+	echo grub-efi-amd64 grub2/linux_cmdline_default string quiet systemd.show_status=1 splash | debconf-set-selections
+
+	# preconfigure grub2
+	if [ -w /etc/default/grub ]; then
+		# set linux_cmdline_default
+		if grep -q ^GRUB_CMDLINE_LINUX_DEFAULT\= /etc/default/grub; then
+			sed -i "s/^\(GRUB_CMDLINE_LINUX_DEFAULT=\).*/\1\"quiet systemd.show_status=1 splash\"/" /etc/default/grub
+		else
+			sed -i "s/^\#\(GRUB_CMDLINE_LINUX_DEFAULT=\).*/\1\"quiet systemd.show_status=1 splash\"/" /etc/default/grub
+		fi
+
+		# disable recovery modes for grub2
+		if grep -q ^GRUB_DISABLE_RECOVERY\= /etc/default/grub; then
+			sed -i "s/^\(GRUB_DISABLE_RECOVERY=\).*/\1\"true\"/" /etc/default/grub
+		else
+			sed -i "s/^\#\(GRUB_DISABLE_RECOVERY=\).*/\1\"true\"/" /etc/default/grub
+		fi
+
+		# disable grub2 submenus and use plain menu structures instead
+		if grep -qv ^GRUB_DISABLE_SUBMENU /etc/default/grub; then
+			printf "\nGRUB_DISABLE_SUBMENU=y\n" >> /etc/default/grub
+		fi
+	fi
+
+	# initscripts defers creating the mtab symlink to the first boot,
+	# create it here to avoid the creation warning.
+	say 'Make mtab a symlink to /proc/mounts'
+	if [ ! -L /etc/mtab ]; then
+		rm -f /etc/mtab
+		ln -sf /proc/mounts /etc/mtab
+	fi
+}
+
+do_journaling() {
+    addgroup --system systemd-journal
+    mkdir -p /var/log/journal
+    chown root:systemd-journal /var/log/journal
+}
+
+case "${1}" in
+    postinst)
+        do_journaling
+        do_postinst
+        ;;
+    *)
+        echo "Usage: ${0} postinst"
+        ;;
+esac
+
+:

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# one will find a sample defaults.conf in ./pyfll
+
+time ./pyfll/fll ${options}  ${aptcache} -c pyfll/conf/lxqt-unstable-amd64.conf

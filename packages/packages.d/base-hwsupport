@@ -1,0 +1,38 @@
+desc = """
+    Packages that provide some kind of support for hardware.
+"""
+
+packages = """
+    acpi-fakekey
+    alsa-utils
+    bluetooth
+    br2684ctl
+    cdtool
+    colord 
+    colord-data
+    crda
+    dmidecode
+    eject
+    ethtool
+    hdparm
+    hwdata
+    irqbalance
+    firmware-linux-free
+    lshw
+    lsscsi
+    lvm2
+    mdadm
+    mobile-broadband-provider-info 
+    modemmanager 
+    pcmciautils
+    pciutils
+    powermgmt-base
+    rfkill
+    sdparm
+    udev
+    udisks2
+    upower
+    usbutils
+    usb-modeswitch
+    wireless-tools
+"""

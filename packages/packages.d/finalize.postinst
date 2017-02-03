@@ -1,0 +1,62 @@
+#!/bin/sh
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+if [ -r /etc/default/distro ]; then
+    . /etc/default/distro
+fi
+
+if [ -f /tmp/fll-data ]; then
+    . /tmp/fll-data
+fi
+
+say() {
+    echo "I: $@..."
+}
+
+do_postinst() {
+    say "..........................."
+    say "..                       .."
+    say "..   finalize.postinst   .."
+    say "..                       .."
+    say "..........................."
+
+    say "Distro:           ${DISTRO}"
+    say "Flavour settings: ${FLAVOUR}"
+    say "Code name:        ${CODENAME}"
+
+    say "Install live settings: ${CODENAME}-${FLAVOUR}-livesettings"
+    apt install "${CODENAME}-${FLAVOUR}-livesettings" --assume-yes
+
+    if [ -f /usr/bin/livesettings ]; then
+        say "Configure Live Settings ... (current livesettings scripts)"
+        livesettings configure
+        LIVE_SETTINGS='found'
+    fi
+
+    if [ "$LIVE_SETTINGS" != 'found' ]; then
+        echo 'No live settings scripts found! Please fix! (exit in finalize.postinst)'
+        exit 1
+    fi
+
+    # setup tmpfs the systemd way
+    if [ -f /usr/share/systemd/tmp.mount ]; then
+        ln -s /usr/share/systemd/tmp.mount /lib/systemd/system
+        systemctl enable tmp.mount
+    else
+        echo "**************************************************"
+        echo "Someone changed the tmp.mount descision in debian!"
+        echo "One should consider to change pyfll that way!     "
+        echo "**************************************************"
+     fi
+}
+
+case "${1}" in
+    postinst)
+        do_postinst
+        ;;
+    *)
+        echo "Error: argument '${1}' not supported" >&2
+        exit 3
+	;;
+esac

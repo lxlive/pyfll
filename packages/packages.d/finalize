@@ -1,0 +1,7 @@
+desc = """
+    Distro specific packages with dependencies on X Window System.
+"""
+
+packages = """
+
+"""

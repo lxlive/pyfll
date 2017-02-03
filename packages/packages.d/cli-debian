@@ -1,0 +1,78 @@
+desc = """
+    Common command line utilities.
+"""
+
+packages = """
+    accountsservice
+    acpi-fakekey
+    apt-conf-siduction
+    apt-file
+    apt-listchanges
+    apt-show-versions
+    apt-transport-https
+    aptitude
+    bash-completion
+    byobu # Description: text window manager, shell multiplexer, integrated DevOps environment
+    bzip2
+    ca-certificates
+    cfv
+    chkrootkit
+    console-data
+    cmospwd
+    command-not-found
+    dbus-user-session  # new, should someday replace dbus-x11  
+    dconf-cli
+    debconf-utils
+    debian-goodies
+    deborphan
+    dialog
+    foremost
+    gpm
+    haveged
+    htop
+    hddtemp
+    inxi
+    iotop
+    kbd
+    less
+    libmtp-runtime
+    linux-cpupower
+    lm-sensors
+    logrotate
+    mc
+    memtest86+
+    mlocate
+    moreutils
+    mosh # mobile shell, ssh roaming over udp
+    most
+    nano
+    ncdu
+    p7zip-full
+    pinentry-curses
+    policykit-1
+    popularity-contest
+    preload
+    pv
+    pwgen
+    realpath
+    reptyr
+    reportbug
+    rkhunter
+    screen
+    smartmontools
+    strace
+    sudo
+    tmux
+    tofrodos
+    tree
+    unp
+    unzip
+    vim-nox
+    vrms
+    whohas
+    whowatch
+    wodim
+    xdg-utils
+    xdg-user-dirs
+    zip
+"""
