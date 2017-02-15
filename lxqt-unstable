@@ -2,4 +2,7 @@
 
 # one will find a sample defaults.conf in ./pyfll
 
+options='-vvvvP'
+aptcache='-t http://192.168.150.41:3142'
+
 time ./pyfll/fll ${options}  ${aptcache} -c pyfll/conf/lxqt-unstable-amd64.conf

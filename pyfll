@@ -1278,7 +1278,9 @@ class FLLBuilder(object):
                 self.conf['distro']['FLL_UUID'] = self.uuid
             elif file == '/tmp/fll-data':
                 f.write('DISTRO="%s"\n' % (self.conf['distro']['FLL_DISTRO_NAME']))
+                f.write('FLAVOUR="%s"\n' % (self.conf['distro']['FLL_FLAVOUR']))
                 f.write('CODENAME="%s"\n' % (self.conf['distro']['FLL_DISTRO_CODENAME_SAFE']))
+                f.write('PROFILE="%s"\n' % (self.conf['packages']['profile']))
         except IOError:
             self.log.exception('failed to open file for writing: %s' % file)
             raise FllError
@@ -2022,8 +2024,8 @@ class FLLBuilder(object):
             cpu = k[k.rfind('-') + 1:]
             vmlinuz = 'vmlinuz-%s' % k
             initrd = 'initrd.img-%s' % k
-            display_iso = 'From CD/DVD/ISO: %s.%s' % (distro, cpu)
-            display_hdd = 'From Stick/HDD: %s.%s' % (distro, cpu)
+            display_iso = 'From CD/DVD/ISO: %s.%s %s' % (distro, cpu, self.conf['distro']['FLL_FLAVOUR'])
+            display_hdd = 'From Stick/HDD: %s.%s %s' % (distro, cpu, self.conf['distro']['FLL_FLAVOUR'])
 
             for f in [vmlinuz, initrd]:
                 if not os.path.isfile(os.path.join(boot_dir, f)):
