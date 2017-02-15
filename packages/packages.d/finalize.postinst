@@ -25,8 +25,8 @@ do_postinst() {
     say "Code name:        ${CODENAME}"
     say "Profile:          ${PROFILE}"
 
-    say "Install live settings: ${CODENAME}-${DISTRO}-livesettings"
-    apt install "${CODENAME}-${DISTRO}-livesettings" --assume-yes
+    say "Install live settings: ${DISTRO}-livesettings"
+    apt install "${DISTRO}-livesettings" --assume-yes
 
     if [ -f /usr/bin/livesettings ]; then
         say "Configure Live Settings ... (current livesettings scripts)"
