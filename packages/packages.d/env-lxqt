@@ -1,44 +1,8 @@
 desc = """
-    Siduction LXQt desktop environment.
+    LXQt Live desktop environment.
 """
 
 packages = """
     task-lxqt-desktop
     sddm-theme-lxqt-frost
-
-
-    # sort later
-    adwaita-qt
-    audacious
-    bash-completion
-    command-not-found
-    git
-    hexchat
-    htop
-    nano
-    qt5-style-plugins
-
-
-    ## gtk2
-#    hardinfo
-#    lxappearance
-#
-#    # gtk3
-#    plank
-#
-#    ## Qt 5
-#    2048-qt
-#    gnome-keyring
-#    gucharmap
-#    juffed
-#
-#
-#    nomacs
-#    qbittorrent
-#    qlipper
-#    qpdfview
-#    screengrab
-#    trojita
-#    xscreensaver
-#
 """
