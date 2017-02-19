@@ -4,7 +4,7 @@ desc = """
 
 packages = """
     task-lxqt-desktop
-    sddm-theme-maui 
+    sddm-theme-lxqt-frost
 
 
     # sort later
